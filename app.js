@@ -37,6 +37,7 @@ app.get('/', function(req, res) {
 });
 
 app.use('/api', api);
+console.log("----------------")
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

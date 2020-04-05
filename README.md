@@ -1,6 +1,4 @@
-# node-express-mongoose-passport-jwt-rest-api-auth
-
-This source code is part of tutorials [Node, Express, Mongoose and Passport.js REST API Authentication]
+# node-express-mongoose-passport-jwt-rest-api-auth-xrp
 
 Before run this example, make sure you have installed and running MongoDB.
 
@@ -25,5 +23,8 @@ This will create following 3 files.
     
 to start mangodb
 cd <path>/mongodb-macos-x86_64-4.2.3/bin
+    
 mongod --dbpath ~/data/db
+
+
     

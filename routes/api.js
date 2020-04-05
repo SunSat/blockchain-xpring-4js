@@ -10,6 +10,7 @@ var Book = require("../models/book");
 var Wallet = require("../models/wallet");
 var xspring = require("./xspring");
 const querystring = require('querystring');
+var users = require('./users');
 
 router.post('/signup', function(req, res) {
   if (!req.body.username || !req.body.password) {
@@ -38,14 +39,11 @@ router.post('/signin', function(req, res) {
     if (!user) {
       res.status(401).send({success: false, msg: 'Authentication failed. User not found.'});
     } else {
-      // check if password matches
       user.comparePassword(req.body.password, function (err, isMatch) {
         if (isMatch && !err) {
-          // if user is found and password is right create a token
           var token = jwt.sign(user.toJSON(), config.secret, {
             expiresIn: 604800 // 1 week
           });
-          // return the information including token as JSON
           res.json({success: true, token: 'JWT ' + token});
         } else {
           res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
@@ -94,7 +92,7 @@ router.get('/book', passport.authenticate('jwt', { session: false}), function(re
   }
 });
 
-router.post('/user/generate/wallet', passport.authenticate('jwt', { session: false}), function(req, res) {
+router.post('/wallet', passport.authenticate('jwt', { session: false}), function(req, res) {
   console.log("-----------------generate/Wallet----------Started----------");
   var token = getToken(req.headers);
   if (token) {
@@ -129,7 +127,7 @@ router.post('/user/generate/wallet', passport.authenticate('jwt', { session: fal
   }
 });
 
-router.get('/user/wallet/:username',passport.authenticate('jwt', { session: false}), function(req, res) {
+router.get('/wallet/:username',passport.authenticate('jwt', { session: false}), function(req, res) {
   console.info("----------------/user/address-----------started--------");
   var token = getToken(req.headers);
   if (token) {
@@ -144,9 +142,17 @@ router.get('/user/wallet/:username',passport.authenticate('jwt', { session: fals
       res.json({success: true, wallet:wallet});
     }); 
   }
+  /*if(token) {
+    let promiseObj = users.getWalletByUserName(req.params.username);
+    promiseObj.then((hello) => {
+      return res.json(hello);
+    }).catch(err => {
+      return res.json(err);
+    });
+  }*/
 });
 
-router.get('/user/balance/account/:address',passport.authenticate('jwt', { session: false}), function(req, res) {
+router.get('account/balance/:address',passport.authenticate('jwt', { session: false}), function(req, res) {
   console.info("----------------/user/address-----------started--------");
   let token = getToken(req.headers);
   if (token) {
@@ -166,7 +172,7 @@ router.get('/user/balance/account/:address',passport.authenticate('jwt', { sessi
   }
 });
 
-router.get('/user/balance/user/:username',passport.authenticate('jwt', { session: false}), function(req, res) {
+router.get('/account/balance/user/:username',passport.authenticate('jwt', { session: false}), function(req, res) {
   console.info("----------------/user/address-----------started--------");
   let token = getToken(req.headers);
   if (token) {
@@ -195,21 +201,49 @@ router.get('/user/balance/user/:username',passport.authenticate('jwt', { session
   }
 });
 
-router.post('/user/transfer',passport.authenticate('jwt', { session: false}), function(req, res) {
+router.post('/account/transfer',passport.authenticate('jwt', { session: false}), function(req, res) {
   var token = getToken(req.headers);
   if (token) {
-    let transferReqObj = {
-      fromAddress : req.body.fromAddress,
-      toAddress : req.body.toAddress,
-      amount: 2
-    };
 
-    let balance;
-    let balancePromise = xspring.getBalance(transferReqObj);
-    balancePromise.then((balance) => {
-      res.json({success:true, balance : balance});
+    /*Wallet.findOne({
+      userName: userName
+    }, function(err, wallet){
+      if(err) {
+        throw {
+          error : "error while fetching user wallet from database",
+          userName : userName
+        }
+      }
+      console.log("=---------- ", wallet);
+
+    });*/
+
+    let transferReqObject = {
+      fromAddress: req.body.fromAddress,
+      amount:req.body.amount,
+      toAddress:req.body.toAddress,
+      currency: req.body.currency,
+      seed: req.body.seed
+    };
+    xspring.sendMoney(transferReqObject).then((result) => {
+      res.json(result);
+    }).catch((err)=> {
+      console.log('oh my god error');
+      res.json('error');
     });
   }
+});
+
+router.get('/transaction/:transactionId',passport.authenticate('jwt', { session: false}), function(req, res) {
+  var token = getToken(req.headers);
+  if (token) {
+    console.log("The transaction id is : ", req.params.transactionId);
+    xspring.getTransaction(req.params.transactionId).then((result) => {
+      res.json(result);
+    }).catch(err => {
+      res.json(err);
+    });
+  };
 });
 
 getToken = function (headers) {

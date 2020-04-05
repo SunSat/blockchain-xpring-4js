@@ -5,13 +5,14 @@ const remoteURL = "grpc.xpring.tech:80";
 const sha256 = require('sha256');
 const rippleKey = require("ripple-keypairs");
 const addressCodec = require('ripple-address-codec');
+const users = require('./users');
 
 
 function generateWallet(wallet) {
     let result;
     try {
-        const unit8Array = sha256('sundar19sat84');
-        const unit8agaArray = sha256(unit8Array, {asBytes: true});
+        const unit8Array = sha256('1111');
+        //const unit8agaArray = sha256(unit8Array, {asBytes: true});
         let options = {
             algorithm : 'ecdsa-secp256k1',
             entropy: unit8agaArray,
@@ -73,25 +74,69 @@ async function getBalance(address) {
     return balanceArr[0];
 }
 
-async function sendMoney(fromAddress, toAddress, amount) {
-    console.log("The Wallet generated successfully.", wallet);
+async function sendMoney(transferReqObject) {
+    console.log("The Wallet generated successfully.", transferReqObject);
 
-    let xrpAmount = new XRPAmount();
-    xrpAmount.setDrops ('123456789');
-    console.log("The Decode of XAddress ", Utils.decodeXAddress(toAddress));
-    console.info("1 is Valid Address : ", Utils.isValidAddress(toAddress));
-    console.info("2 is Valid Address : ", Utils.isValidClassicAddress(toAddress));
-    console.info("3 is Valid Address : ", Utils.isValidXAddress(toAddress));
-    console.info("4 is Valid Address : ", toAddress);
+    //Step 1 :
+    let prepareTx = {
+        "TransactionType": "Payment",
+        "Account": transferReqObject.fromAddress,
+        "Amount": serverApi.xrpToDrops(transferReqObject.amount),
+        "Destination": transferReqObject.toAddress
+    };
 
-    //let result = await xpringClient.send(wallet,xrpAmount,toAddress);
-    //console.log("The final transfer result ", result);
-    return "";
+    await serverApi.connect().catch((err) => {
+        console.error(err);
+        return "error while connecting with sever. Please retry after some time."
+    });
+
+    const transactionPrepared = await serverApi.prepareTransaction(prepareTx,{
+        // Expire this transaction if it doesn't execute within ~5 minutes:
+        "maxLedgerVersionOffset": 75
+    });
+
+    console.log("prepared successfully. ", JSON.stringify(transactionPrepared));
+
+
+    let signedTx;
+    try {
+        signedTx = await serverApi.sign(transactionPrepared.txJSON, transferReqObject.seed);
+    } catch (e) {
+        console.log("Hello I am error ------------------ ", e);
+    }
+
+    console.log("Signed successfully. ", JSON.stringify(signedTx));
+
+    let submitTx;
+    try {
+       submitTx = await serverApi.submit(signedTx.signedTransaction);
+    } catch (e) {
+        console.log("FInal Error is : ", e);
+    }
+    console.log("Submitted successfully. ", JSON.stringify(submitTx));
+
+    let response = {
+        resultCode : submitTx.resultCode,
+        resultMessage: submitTx.resultMessage,
+        transactionId: submitTx.tx_json.hash
+    }
+    return response;
+}
+
+async function getTransaction(transactionId) {
+    console.log("The getTransaction id is : ", transactionId);
+    serverApi.connect().catch(err => {
+        throw err;
+    });
+
+    let response = await serverApi.getTransaction(transactionId);
+    return response;
 }
 
 module.exports.generateWallet = generateWallet;
 module.exports.generateRandomWallet = generateRandomWallet;
 module.exports.getBalance = getBalance;
 module.exports.sendMoney = sendMoney;
+module.exports.getTransaction = getTransaction;
 
 //getBalance('rJu9mgh7EHEthe8J5CRHnXasikUkghkjWr');

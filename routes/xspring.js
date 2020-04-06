@@ -12,7 +12,7 @@ function generateWallet(wallet) {
     let result;
     try {
         const unit8Array = sha256('1111');
-        //const unit8agaArray = sha256(unit8Array, {asBytes: true});
+        const unit8agaArray = sha256(unit8Array, {asBytes: true});
         let options = {
             algorithm : 'ecdsa-secp256k1',
             entropy: unit8agaArray,

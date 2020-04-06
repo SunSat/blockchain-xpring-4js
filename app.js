@@ -5,12 +5,12 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
-var mongoose = require('mongoose');
-var passport = require('passport');
+//var mongoose = require('mongoose');
+//var passport = require('passport');
 var cors = require('cors');
-var config = require('./config/database');
+//var config = require('./config/database');
 
-mongoose.connect(config.database, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect(config.database, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true });
 
 var api = require('./routes/api');
 
@@ -30,10 +30,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(morgan('dev'));
-app.use(passport.initialize());
+//app.use(passport.initialize());
 
 app.get('/', function(req, res) {
-  res.send('Page under construction.');
+  res.send('Hello World. Started the application successfully.');
 });
 
 app.use('/api', api);

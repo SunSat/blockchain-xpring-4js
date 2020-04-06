@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "c4614d67-0268-4dde-b721-6b7b0b3e60a0",
+		"name": "blockchain-ripple-azure",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "generate_Wallet",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTg0ZTZmYmNhYjAwNjA3MmQ3MTgyZTciLCJ1c2VybmFtZSI6InNhdGhpc2giLCJwYXNzd29yZCI6IiQyYSQxMCRab0dwSzQwczNkWnJ5eTdqWGUzNDEuUU1xUmFJQ1pwMHlLaFd4QmRnaFUvdy4xWVo5MzExcSIsImNyZWF0ZWQiOiIyMDIwLTA0LTAxVDE5OjA5OjQ3LjU2OFoiLCJ1cGRhdGVkIjoiMjAyMC0wNC0wMVQxOTowOTo0Ny41NjhaIiwiX192IjowLCJpYXQiOjE1ODU3NjgxOTUsImV4cCI6MTU4NjM3Mjk5NX0.oywF9MtZI44GO_q6tU_8LQ-XzUOmMOHa-ocT-mQMc8w",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\":\"sat\",\n\t\"passpharse\":\"1111111111111\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/wallet",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"wallet"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "sathish",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getBalanceByAccountId",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTgyMWQ0MDAyYTg5ZDVlYjM4MzEyY2UiLCJ1c2VybmFtZSI6InNhdGhpc2giLCJwYXNzd29yZCI6IiQyYSQxMCRmdmpqeW00YWRRZ2xQSXkxSkNFcFh1eVhKMFdPbjNlUnM4N3NYeWJYZXlOYWF4LmVLTU12YSIsImNyZWF0ZWQiOiIyMDIwLTAzLTMwVDE2OjI0OjMyLjExMloiLCJ1cGRhdGVkIjoiMjAyMC0wMy0zMFQxNjoyNDozMi4xMTNaIiwiX192IjowLCJpYXQiOjE1ODU2Mzg2MDQsImV4cCI6MTU4NjI0MzQwNH0.QkG9FXZwBmVwO-A1ZFomPuz370HeNXRLZqOBmu9yXVk"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/account/balance/rhWJXL7sW3otqHpd6S7KwphYK5SND6NK2X",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"account",
+						"balance",
+						"rhWJXL7sW3otqHpd6S7KwphYK5SND6NK2X"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer Amt",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTgyMWQ0MDAyYTg5ZDVlYjM4MzEyY2UiLCJ1c2VybmFtZSI6InNhdGhpc2giLCJwYXNzd29yZCI6IiQyYSQxMCRmdmpqeW00YWRRZ2xQSXkxSkNFcFh1eVhKMFdPbjNlUnM4N3NYeWJYZXlOYWF4LmVLTU12YSIsImNyZWF0ZWQiOiIyMDIwLTAzLTMwVDE2OjI0OjMyLjExMloiLCJ1cGRhdGVkIjoiMjAyMC0wMy0zMFQxNjoyNDozMi4xMTNaIiwiX192IjowLCJpYXQiOjE1ODU2Mzg2MDQsImV4cCI6MTU4NjI0MzQwNH0.QkG9FXZwBmVwO-A1ZFomPuz370HeNXRLZqOBmu9yXVk"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"fromAddress\": \"rP5LbDLxFHvM4mk7GQQ8zKHoFfk9NWNNee\",\n\t\"toAddress\": \"rhWJXL7sW3otqHpd6S7KwphYK5SND6NK2X\",\n\t\"amount\": \"2\",\n\t\"currency\": \"XRP\",\n\t\"seed\": \"shWL4SBG7SFnEQzcnMmVGh8K1ihvw\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/account/transfer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"account",
+						"transfer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CheckTransaction",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTgyMWQ0MDAyYTg5ZDVlYjM4MzEyY2UiLCJ1c2VybmFtZSI6InNhdGhpc2giLCJwYXNzd29yZCI6IiQyYSQxMCRmdmpqeW00YWRRZ2xQSXkxSkNFcFh1eVhKMFdPbjNlUnM4N3NYeWJYZXlOYWF4LmVLTU12YSIsImNyZWF0ZWQiOiIyMDIwLTAzLTMwVDE2OjI0OjMyLjExMloiLCJ1cGRhdGVkIjoiMjAyMC0wMy0zMFQxNjoyNDozMi4xMTNaIiwiX192IjowLCJpYXQiOjE1ODU2Mzg2MDQsImV4cCI6MTU4NjI0MzQwNH0.QkG9FXZwBmVwO-A1ZFomPuz370HeNXRLZqOBmu9yXVk"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"fromAddress\": \"rP5LbDLxFHvM4mk7GQQ8zKHoFfk9NWNNee\",\n\t\"toAddress\": \"rhWJXL7sW3otqHpd6S7KwphYK5SND6NK2X\",\n\t\"amount\": \"2\",\n\t\"currency\": \"XRP\",\n\t\"seed\": \"shWL4SBG7SFnEQzcnMmVGh8K1ihvw\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/transaction/B70AE32CDFD99E8217F4E1F7AC7E34B86FC96ABC06975822437DD2480A5AF618",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"transaction",
+						"B70AE32CDFD99E8217F4E1F7AC7E34B86FC96ABC06975822437DD2480A5AF618"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

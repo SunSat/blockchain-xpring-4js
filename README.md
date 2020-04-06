@@ -22,7 +22,7 @@ This will create following 3 files.
     the data directory path (/usr/local/var/mongodb)
     
 to start mangodb
-cd <path>/mongodb-macos-x86_64-4.2.3/bin
+cd path_to_mangodb/mongodb-macos-x86_64-4.2.3/bin
     
 mongod --dbpath ~/data/db
 

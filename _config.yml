@@ -1,1 +1,5 @@
 theme: jekyll-theme-cayman
+
+title: XRP Cold Wallet Generation from Test Network
+destination: This is the demo project for beginers. You can generate xrp address from your seed.
+  And fund some test xrp and send those test xrp.

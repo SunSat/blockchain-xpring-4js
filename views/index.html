@@ -1,21 +1,56 @@
 <!DOCTYPE html>
 <html>
-<title>Ripple XRP API Operations</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-<link rel="script" href="https://www.npmjs.com/package/sha.js">
-<style>
-    body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
-</style>
+<head>
+    <title>Ripple XRP API Operations</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="script" href="https://www.npmjs.com/package/sha.js">
+    <style>
+        body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+    </style>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"/>
+</head>
 <body class="w3-light-grey">
-<script type="text/javascript" src="js/helloworld.js"></script>
+<script type="text/javascript" src="../js/helloworld.js"></script>
 <script type="application/javascript">
 
+    $(document).ready(function () {
+        $("#generateWalletMsgDiv").hide();
+        $("#generateWalletMsgLbl").innerText = "";
+    });
+
     function generateWallet() {
-        alert("calling alert");
-        helloWorld();
+        let key = $("#secreteKey").val();
+        if(!key) {
+            $("#generateWalletMsgDiv").show();
+            $("#generateWalletMsgLbl").html("Enter the Wallet Secrete Key");
+        }
+        else {
+            $("#generateWalletMsgDiv").hide();
+            $("#generateWalletMsgLbl").innerText = "";
+            let data = {
+                passpharse: key
+            }
+            $.post('/api/wallet',{passpharse:key},function (data, status,xhr) {
+
+                if(status != 'success') {
+                    $("#generateWalletMsgDiv").show();
+                    $("#generateWalletMsgLbl").html("Error while communicating with server. Please try after some time.");
+                } else {
+                    //let resultVal = JSON.stringify(data);
+                    $("#generateWalletMsgDiv").show();
+                    $("#generateWalletMsgLbl").html("");
+                    let txt = "<table border='1'>"
+                    for (x in data) {
+                        txt += "<tr><td>" + x + "</td><td>"+ data[x] +"</td></tr>";
+                    }
+                    txt += "</table>"
+                    document.getElementById("generateWalletMsgDiv").innerHTML = txt;
+                }
+            })
+        }
     }
 </script>
 <!-- w3-content defines a container for fixed size centered content,
@@ -40,9 +75,19 @@ and is wrapped around the whole page content, except for the footer in this exam
                 </div>
 
                 <div class="w3-container">
-                    <p>In this blog I am going to show you on how to generate ripple wallet and address from secrete key.
-                        And how to send & receive some test xrp to your own generated address. This blog is for developer
-                        who is interested to learn Ripple XRP Blockchian.</p>
+                    <p>In this blog I am going to explain about Ripple XRP Block Chain. This blog is for developer
+                        who is interested to learn Ripple XRP Blockchian.
+                    </p>
+                    <p>
+                    <h5>Following the operation you can perform on Ripple XRP API</h5>.
+                    <ol>
+                        <li> Wallet Address Generation. </li>
+                        <li> Get Balance. </li>
+                        <li> Send or Transfer XRP </li>
+                        <li>Check Transaction Status</li>
+                        <li> Multiple Siging.</li>
+                    </ol>
+                    </p>
                 </div>
             </div>
             <hr>
@@ -50,9 +95,10 @@ and is wrapped around the whole page content, except for the footer in this exam
             <!-- Blog entry -->
             <div class="w3-card-4 w3-margin w3-white">
                 <div class="w3-container">
-                    <h3><b>Wallet & Address Generation</b></h3>
+                    <h3><b>1. Wallet & Address Generation</b></h3>
                     <h5>XRP Wallet Generation is Offline process no need to communicate with any XRP Server. We can generate address offline and load some test xrp from other address.
                         The full code available in the <a href="https://github.com/SunSat/blockchain-xpring-4js">[github]</a> You can download.
+                        Please make a note of Clasic Address, Seed, Secrete Key, public and private Key.
                     </h5>
                 </div>
 
@@ -60,9 +106,12 @@ and is wrapped around the whole page content, except for the footer in this exam
                     <div class="ws-row">
                         <div class="ws-col m8 s12">
                            <p>
-                               <label class="">secreateKey : </label>  <input type="text" name="secreateKey"/>
+                               <label class="">secreateKey : </label>  <input type="text" id="secreteKey" name="secreteKey"/>
                                <button class="w3-button w3-padding-small w3-white w3-border" onclick="generateWallet()">Generate Wallet</button>
                            </p>
+                            <div class="ws-col" id="generateWalletMsgDiv">
+                                <label id="generateWalletMsgLbl"></label>
+                            </div>
                         </div>
                     </div>
                 </div>

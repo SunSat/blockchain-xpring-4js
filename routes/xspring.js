@@ -1,17 +1,14 @@
-const { XRPAmount, XpringClient, Wallet } = require('xpring-js');
+const { Wallet } = require('xpring-js');
 const serverApi = require('../config/serverRippleApi').ServerApi;
-const remoteURL = "grpc.xpring.tech:80";
-//const xpringClient = new XpringClient(remoteURL);
 const sha256 = require('sha256');
 const rippleKey = require("ripple-keypairs");
 const addressCodec = require('ripple-address-codec');
-const users = require('./users');
 
 
-function generateWallet(wallet) {
+function generateWallet(walletReq) {
     let result;
     try {
-        const unit8Array = sha256('1111');
+        const unit8Array = sha256(walletReq.passpharse);
         const unit8agaArray = sha256(unit8Array, {asBytes: true});
         let options = {
             algorithm : 'ecdsa-secp256k1',
@@ -138,5 +135,3 @@ module.exports.generateRandomWallet = generateRandomWallet;
 module.exports.getBalance = getBalance;
 module.exports.sendMoney = sendMoney;
 module.exports.getTransaction = getTransaction;
-
-//getBalance('rJu9mgh7EHEthe8J5CRHnXasikUkghkjWr');

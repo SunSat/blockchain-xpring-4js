@@ -33,7 +33,9 @@ app.use(morgan('dev'));
 //app.use(passport.initialize());
 
 app.get('/', function(req, res) {
-  res.send('Hello World. Started the application successfully.');
+  /*res.send('Hello World. Started the application successfully.');*/
+  res.sendFile(__dirname+'/views/index.html')
+  console.log("The path is :", __dirname);
 });
 
 app.use('/api', api);

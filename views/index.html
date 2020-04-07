@@ -8,12 +8,33 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <link rel="script" href="https://www.npmjs.com/package/sha.js">
     <style>
-        body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+        body, h1, h2, h3, h4, h5 {
+            font-family: "Raleway", sans-serif
+        }
     </style>
-    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"/>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    <script src="./static/js/generateAddress.js"></script>
+    <script src="./static/js/checkBalance.js"></script>
+    <script src="./static/js/transferXrp.js"></script>
+    <script src="./static/js/checkTransaction.js"></script>
+
+    <style>
+        #overlay {
+            display: none;
+            position: absolute;
+            background: #fff;
+        }
+
+        #img-load {
+            position: absolute;
+        }
+    </style>
+
 </head>
 <body class="w3-light-grey">
-<script type="text/javascript" src="../js/helloworld.js"></script>
+<div id="overlay">
+    <img src='./static/image/gif/tenor.gif' id="img-load"/>
+</div>
 <script type="application/javascript">
 
     $(document).ready(function () {
@@ -21,45 +42,14 @@
         $("#generateWalletMsgLbl").innerText = "";
     });
 
-    function generateWallet() {
-        let key = $("#secreteKey").val();
-        if(!key) {
-            $("#generateWalletMsgDiv").show();
-            $("#generateWalletMsgLbl").html("Enter the Wallet Secrete Key");
-        }
-        else {
-            $("#generateWalletMsgDiv").hide();
-            $("#generateWalletMsgLbl").innerText = "";
-            let data = {
-                passpharse: key
-            }
-            $.post('/api/wallet',{passpharse:key},function (data, status,xhr) {
-
-                if(status != 'success') {
-                    $("#generateWalletMsgDiv").show();
-                    $("#generateWalletMsgLbl").html("Error while communicating with server. Please try after some time.");
-                } else {
-                    //let resultVal = JSON.stringify(data);
-                    $("#generateWalletMsgDiv").show();
-                    $("#generateWalletMsgLbl").html("");
-                    let txt = "<table border='1'>"
-                    for (x in data) {
-                        txt += "<tr><td>" + x + "</td><td>"+ data[x] +"</td></tr>";
-                    }
-                    txt += "</table>"
-                    document.getElementById("generateWalletMsgDiv").innerHTML = txt;
-                }
-            })
-        }
-    }
 </script>
 <!-- w3-content defines a container for fixed size centered content,
 and is wrapped around the whole page content, except for the footer in this example -->
 <div class="w3-content" style="max-width:1400px">
     <!-- Header -->
     <header class="w3-container w3-center w3-padding-32">
-        <h1><b>Ripple XRP Address Generation & Transfer XRP on TestNet</b></h1>
-        <p>Welcome to the blog of <span class="w3-tag">Sathish Kumar Sundaram</span></p>
+        <h1><b>Ripple XRP Wallet From Testnet</b></h1>
+        <p>Welcome to the blog of <span class="w3-tag">Sathish</span></p>
     </header>
 
     <!-- Grid -->
@@ -78,52 +68,222 @@ and is wrapped around the whole page content, except for the footer in this exam
                     <p>In this blog I am going to explain about Ripple XRP Block Chain. This blog is for developer
                         who is interested to learn Ripple XRP Blockchian.
                     </p>
-                    <p>
-                    <h5>Following the operation you can perform on Ripple XRP API</h5>.
+                    <h6>Following the operation you can perform on Ripple XRP API</h6>.
                     <ol>
-                        <li> Wallet Address Generation. </li>
-                        <li> Get Balance. </li>
-                        <li> Send or Transfer XRP </li>
+                        <li> Wallet Address Generation.</li>
+                        <li> Get Balance.</li>
+                        <li> Send or Transfer XRP</li>
                         <li>Check Transaction Status</li>
                         <li> Multiple Siging.</li>
                     </ol>
-                    </p>
                 </div>
             </div>
             <hr>
 
             <!-- Blog entry -->
-            <div class="w3-card-4 w3-margin w3-white">
+            <div class="w3-card-4 w3-margin w3-white" id="generateWalletContainerDiv">
                 <div class="w3-container">
                     <h3><b>1. Wallet & Address Generation</b></h3>
-                    <h5>XRP Wallet Generation is Offline process no need to communicate with any XRP Server. We can generate address offline and load some test xrp from other address.
-                        The full code available in the <a href="https://github.com/SunSat/blockchain-xpring-4js">[github]</a> You can download.
-                        Please make a note of Clasic Address, Seed, Secrete Key, public and private Key.
+                    <h5 style="font-size: 14px">XRP Wallet Generation is Offline process no need to communicate with any XRP Server. We can
+                        generate address offline and load some test xrp from other address.
+                        The full code available in the <a
+                                href="https://github.com/SunSat/blockchain-xpring-4js/tree/xpring-4js-master_without_db">[github]</a>
+                        You can download.
+                        Please make a note of Clasic Address, Seed, Secrete Key, public and private Key for next set of
+                        API.
                     </h5>
                 </div>
 
-                <div class="ws-container">
+                <div class="ws-container" >
                     <div class="ws-row">
                         <div class="ws-col m8 s12">
-                           <p>
-                               <label class="">secreateKey : </label>  <input type="text" id="secreteKey" name="secreteKey"/>
-                               <button class="w3-button w3-padding-small w3-white w3-border" onclick="generateWallet()">Generate Wallet</button>
-                           </p>
-                            <div class="ws-col" id="generateWalletMsgDiv">
-                                <label id="generateWalletMsgLbl"></label>
-                            </div>
+                            <p>
+                                <div class="w3-padding-large">
+                                    <label class="">secreateKey : </label>
+                                    <input type="text" id="secreteKey" name="secreteKey"/>
+                                    <button class="w3-button w3-padding-small w3-white w3-border" onclick="generateWallet()">Generate Wallet</button>
+                                </div>
+                                <div class="w3-padding-large" id="generateWalletMsgDiv">
+                                    <label id="generateWalletMsgLbl"></label>
+                                </div>
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <div class="w3-container">
+                <div class="w3-container" >
                     <div class="w3-row">
                         <div class="w3-col m8 s12">
-                            <p><button class="w3-button w3-padding-large w3-white w3-border"><b><a target="_blank" href="https://xrpl.org/get-started-with-rippleapi-for-javascript.html">READ MORE »</a> </b></button></p>
+                            <p>
+                                <button class="w3-button w3-padding-large w3-white w3-border">
+                                    <a target="_blank" href="https://xrpl.org/get-started-with-rippleapi-for-javascript.html">READ MORE »</a>
+                                </button>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
+            <hr>
+            <!-- END BLOG ENTRIES -->
+
+            <!-- Blog entry -->
+            <div class="w3-card-4 w3-margin w3-white" id="checkBalanceContainerDiv">
+                <div class="w3-container">
+                    <h3><b>2. Check Balance.</b></h3>
+                    <h5 style="font-size: 14px">Using this API you can check the balance of any testnet xrp address.
+                    </h5>
+                </div>
+
+                <div class="ws-container" >
+                    <div class="ws-row">
+                        <div class="ws-col m8 s12">
+                            <p>
+                            <div class="w3-padding-large">
+                                <label class="">Get Balance : </label>
+                                <input type="text" id="checkBalanceTxt" name="checkBalanceTxt"/>
+                                <button class="w3-button w3-padding-small w3-white w3-border" onclick="checkBalance()">Generate Wallet</button>
+                            </div>
+                            <div class="w3-padding-large" id="cehckBalanceMsgDiv">
+                                <label id="checkBalanceMsgLbl"></label>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w3-container" >
+                    <div class="w3-row">
+                        <div class="w3-col m8 s12">
+                            <p>
+                                <button class="w3-button w3-padding-large w3-white w3-border">
+                                    <a target="_blank" href="https://xrpl.org/get-started-with-rippleapi-for-javascript.html">READ MORE »</a>
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <!-- END BLOG ENTRIES -->
+
+            <!-- Blog entry -->
+            <div class="w3-card-4 w3-margin w3-white" id="transferXRPContainerDiv">
+                <div class="w3-container">
+                    <h3><b>3. Fund/Transfer Some XRP</b></h3>
+                    <h5 style="font-size: 14px">The XRP Address you have generated from Secrete Key is offline process. You need to fund some
+                        XRP from existing XRP account. Otherwise You need to generate new xrp address from <a target="_blank"
+                                href="https://xrpl.org/xrp-testnet-faucet.html">Ripple Testnet XRP</a> and generate TestNet Credentials.
+                        This will give you an address with Test XRP as balance. You can use this TestNet XRP as from
+                        account to fund your own generated XRPs from seed.
+                    </h5>
+                </div>
+
+                <p>
+                <div class="ws-container" >
+                    <div class="ws-row">
+                        <div class="ws-col m8 s12">
+                            <table class="w3-padding-large">
+                                <tr>
+                                    <td>
+                                        <label for="fromAddressTransferXrpTxt">From Address </label><span style="color: red">*</span> :
+                                    </td>
+                                    <td>
+                                        <input type="text" id="fromAddressTransferXrpTxt" name="fromAddressTransferXrpTxt"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="seedTransferXrpTxt">From Address's Seed  </label><span style="color: red">*</span> :
+                                    </td>
+                                    <td>
+                                        <input type="text" id="seedTransferXrpTxt" name="seedTransferXrpTxt"/>
+                                        <label>To Sign the transaction Need seed.</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="toAddressTransferXrpTxt">To Address </label><span style="color: red">*</span> :
+                                    </td>
+                                    <td>
+                                        <input type="text" id="toAddressTransferXrpTxt" name="toAddressTransferXrpTxt"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="amountTransferXrpTxt">Amount  </label><span style="color: red">*</span> :
+                                    </td>
+                                    <td>
+                                        <input type="number" id="amountTransferXrpTxt" name="amountTransferXrpTxt"/>
+                                        <label>Total No of XRP Want to Transfer</label>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="w3-padding-large">
+                                <button class="w3-button w3-padding-large w3-white w3-border" onclick="transferXrp()">
+                                    Transfer Amount
+                                </button>
+                                <div class="ws-col" id="transferWalletMsgDiv">
+                                    <label id="transferWalletMsgLbl"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </p>
+
+
+                <div class="w3-container w3-padding-large">
+                    <div class="w3-row">
+                        <div class="w3-col m8 s12">
+                            <p>
+                                <button class="w3-button w3-padding-large w3-white w3-border">
+                                    <a target="_blank" href="https://xrpl.org/get-started-with-rippleapi-for-javascript.html">READ MORE »</a>
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+
+            <!-- Blog entry -->
+            <div class="w3-card-4 w3-margin w3-white" id="checkTransactionContainerDiv">
+                <div class="w3-container">
+                    <h3><b>4. Check Transaction Status.</b></h3>
+                    <h5 style="font-size: 14px">This API Will be used to check the transaction status.
+                    </h5>
+                </div>
+
+                <div class="ws-container" >
+                    <div class="ws-row">
+                        <div class="ws-col m8 s12">
+                            <p>
+                            <div class="w3-padding-large">
+                                <label class="">Transaction Id : </label>
+                                <input type="text" id="transactionIdTxt" name="transactionIdTxt"/>
+                                <button class="w3-button w3-padding-small w3-white w3-border" onclick="cehckTransaction()">Check Transaction</button>
+                            </div>
+                            <div class="w3-padding-large" id="checkTransactionMsgDiv">
+                                <label id="checkTransactionMsgLbl"></label>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w3-container" >
+                    <div class="w3-row">
+                        <div class="w3-col m8 s12">
+                            <p>
+                                <button class="w3-button w3-padding-large w3-white w3-border">
+                                    <a target="_blank" href="https://xrpl.org/get-started-with-rippleapi-for-javascript.html">READ MORE »</a>
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
             <!-- END BLOG ENTRIES -->
         </div>
 
@@ -140,7 +300,8 @@ and is wrapped around the whole page content, except for the footer in this exam
             <!-- END Introduction Menu -->
         </div>
         <!-- END GRID -->
-    </div><br>
+    </div>
+    <br>
     <!-- END w3-content -->
 </div>
 

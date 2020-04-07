@@ -7,8 +7,6 @@ var xspring = require("./xspring");
 
 router.post('/wallet', function(req, res) {
   console.log("-----------------generate/Wallet----------Started----------");
-  var token = true;//getToken(req.headers);
-  if (token) {
     let walletReq = {
       passpharse: req.body.passpharse,
     };
@@ -28,34 +26,31 @@ router.post('/wallet', function(req, res) {
 
     };
     console.log("The wallet scheme going to save is : ", response);
+    setTimeout(()=> {
+
+    },5000);
     res.json(response);
-  } else {
-    return res.status(403).send({success: false, msg: 'Unauthorized.'});
-  }
-});
+  });
 
 router.get('/account/balance/:address', function (req,res) {
   console.info("----------------/user/address-----------started--------");
-  let token = true;//getToken(req.headers);
-  if (token) {
     let promiseObj = xspring.getBalance(req.params.address);
     promiseObj.then((balance) => {
-      res.json({success:true, balance : balance});
+      balance.success = true;
+      res.json(balance);
     }).catch((err) => {
       let errRes = {
         genericError : 'error while fetching the balance details',
         reqAddress: req.params.address,
-        errorMsg : err.data.error_message,
-        errorCode: err.data.error_code,
       };
       res.status = 404;
       res.json(errRes);
     });
-  }
-});
+  });
 
 router.post('/account/transfer', function(req, res) {
 
+  console.log("The full body is : ", req.body);
     let transferReqObject = {
       fromAddress: req.body.fromAddress,
       amount:req.body.amount,
@@ -66,8 +61,8 @@ router.post('/account/transfer', function(req, res) {
     xspring.sendMoney(transferReqObject).then((result) => {
       res.json(result);
     }).catch((err)=> {
-      console.log('oh my god error');
-      res.json('error');
+      console.log('oh my god error',err);
+      res.json(err);
     });
 });
 

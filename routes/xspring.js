@@ -90,7 +90,7 @@ async function sendMoney(transferReqObject) {
             status : 'error',
             message: 'error while preparing for trnasfer request. ',
             reason: 'invalid address format'
-        }
+        };
         throw response;
     }
     let transactionPrepared;
@@ -104,45 +104,24 @@ async function sendMoney(transferReqObject) {
             status : 'error',
             message: 'error while preparing for trnasfer request. ',
             reason: 'invalid address format'
-        }
+        };
         throw response;
     }
     console.log("prepared successfully. ", JSON.stringify(transactionPrepared));
 
-    let signedTx;
-    try {
-        signedTx = await serverApi.sign(transactionPrepared.txJSON, transferReqObject.seed);
-    } catch (e) {
-        console.log("Error while siging the transactions. ", e);
-        let response = {
-            status : 'error',
-            errorMsg : 'Not able to sign the transaction.',
-            reason : 'xrp address / seed might be wrong'
-        }
-        throw response;
-    }
+    let signedTx = await signTransaction(transactionPrepared.txJSON,transferReqObject.seed);
 
     console.log("Signed successfully. ", JSON.stringify(signedTx));
 
-    let submitTx;
-    try {
-       submitTx = await serverApi.submit(signedTx.signedTransaction);
-    } catch (e) {
-        console.log("Error while transfering the XRP: ", e);
-        let response = {
-            status : 'error',
-            errorMsg : 'Error while transfering the XRP.',
-            reason : 'XRP Amount might wrong.'
-        };
-        throw response;
-    }
+    let submitTx = await submitTransaction(signedTx.signedTransaction);
+
     console.log("Submitted successfully. ", JSON.stringify(submitTx));
 
     let response = {
         resultCode : submitTx.resultCode,
         resultMessage: submitTx.resultMessage,
         transactionId: submitTx.tx_json.hash
-    }
+    };
     return response;
 }
 
@@ -156,8 +135,92 @@ async function getTransaction(transactionId) {
     return response;
 }
 
+async function preparePayment(preparePaymentReq) {
+    console.log("inside Xpring preparePayment", preparePaymentReq);
+    try {
+        await serverApi.connect().catch(err => {
+            throw "error while connecting with server.";
+        });
+    }catch (e) {
+        throw e;
+    }
+
+    const payment = {
+        "source": {
+            "address": preparePaymentReq.fromAddress,
+            "maxAmount": {
+                "value": preparePaymentReq.amount,
+                "currency": "XRP",
+                "counterparty": preparePaymentReq.fromAddress
+            }
+        },
+        "destination": {
+            "address": preparePaymentReq.toAddress,
+            "amount": {
+                "value": preparePaymentReq.amount,
+                "currency": "XRP",
+                "counterparty": preparePaymentReq.fromAddress
+            }
+        }
+    };
+    console.log("The request before going to send.", payment);
+    let prepareTxRes;
+    try {
+        prepareTxRes = await serverApi.preparePayment(preparePaymentReq.fromAddress, payment);
+    }catch (e) {
+        throw e;
+    }
+
+    let signTx = await signTransaction(prepareTxRes.txJSON,preparePaymentReq.fromSeed);
+
+    console.log("successful signing response : " + signTx);
+
+    let submitRes = await submitTransaction(signTx.signedTransaction);
+
+    let response = {
+        resultCode : submitRes.resultCode,
+        resultMessage: submitRes.resultMessage,
+        transactionId: submitRes.tx_json.hash
+    };
+    return response;
+
+    return submitRes;
+}
+
+async function signTransaction(txJson, seedToSign) {
+    let signedTx;
+    try {
+        signedTx = await serverApi.sign(txJson, seedToSign);
+    } catch (e) {
+        console.log("Error while siging the transactions. ", e);
+        let response = {
+            status : 'error',
+            errorMsg : 'Not able to sign the transaction.',
+            reason : 'xrp address / seed might be wrong'
+        };
+        throw response;
+    }
+    return signedTx;
+}
+
+async function submitTransaction(signedTx) {
+    let submitTx;
+    try {
+        submitTx = await serverApi.submit(signedTx);
+    } catch (e) {
+        console.log("Error while submitting the signed transaction the error is : ", e);
+        let response = {
+            status : 'error',
+            errorMsg : 'Error while transfering the XRP.',
+            reason : 'XRP Amount might wrong.'
+        };
+        throw response;
+    }
+    return submitTx;
+}
 module.exports.generateWallet = generateWallet;
 module.exports.generateRandomWallet = generateRandomWallet;
 module.exports.getBalance = getBalance;
 module.exports.sendMoney = sendMoney;
 module.exports.getTransaction = getTransaction;
+module.exports.preparePayment = preparePayment;

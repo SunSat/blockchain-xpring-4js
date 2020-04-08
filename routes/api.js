@@ -75,4 +75,15 @@ router.get('/transaction/:transactionId', function(req, res) {
     });
 });
 
+router.post('/v1/accounts/payment/prepare',function (req,res) {
+  console.log(req.body);
+
+  xspring.preparePayment(req.body).then(result => {
+    return res.json(result);
+  }).catch(err => {
+    return res.json({status:'error while pareparing for transaction.'});
+  })
+
+})
+
 module.exports = router;
